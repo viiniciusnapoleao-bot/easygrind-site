@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyGrind — Sistema para Personal Trainer</title>
+<meta name="description" content="Ficha completa do aluno, prescrição de treino, avaliação física e mensalidade em dia. Um programa que roda no seu computador, com seus dados na sua máquina.">
+<link rel="icon" href="favicon.ico" sizes="any">
+
+<meta property="og:title" content="EasyGrind — Sistema para Personal Trainer">
+<meta property="og:description" content="Ficha do aluno, treino, avaliação física e cobrança num lugar só.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://easygrind.com.br/">
+<meta property="og:locale" content="pt_BR">
+
+<style>
+  :root{
+    --roxo:#7c5cff;
+    --roxo-escuro:#5b3fd6;
+    --tinta:#16141f;
+    --tinta-suave:#55505f;
+    --fundo:#ffffff;
+    --fundo-suave:#f6f5fa;
+    --borda:#e6e3ee;
+    --ok:#1f9d64;
+    --largura:1080px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--fundo);
+    color:var(--tinta);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%}
+  a{color:var(--roxo-escuro)}
+  .env{max-width:var(--largura);margin:0 auto;padding-inline:20px}
+
+  /* ---------- topo ---------- */
+  header{border-bottom:1px solid var(--borda);position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);z-index:10}
+  .topo{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+  .marca{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.02em;text-decoration:none;color:var(--tinta)}
+  .marca span.sigla{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--roxo);color:#fff;font-size:15px}
+  nav{display:flex;gap:22px;font-size:15px}
+  nav a{color:var(--tinta-suave);text-decoration:none}
+  nav a:hover{color:var(--tinta)}
+  @media (max-width:620px){nav{display:none}}
+
+  /* ---------- botões ---------- */
+  .botao{
+    display:inline-block;padding:13px 22px;border-radius:10px;font-weight:600;
+    text-decoration:none;text-align:center;border:1px solid transparent;transition:.15s;
+  }
+  .botao-principal{background:var(--roxo);color:#fff}
+  .botao-principal:hover{background:var(--roxo-escuro)}
+  .botao-neutro{background:#fff;color:var(--tinta);border-color:var(--borda)}
+  .botao-neutro:hover{border-color:#cfc9e0}
+
+  /* ---------- herói ---------- */
+  .heroi{padding-block:76px 64px;text-align:center}
+  .heroi h1{font-size:clamp(30px,5vw,50px);line-height:1.12;letter-spacing:-.03em;margin:0 0 18px}
+  .heroi p.chamada{font-size:clamp(17px,2.2vw,20px);color:var(--tinta-suave);max-width:640px;margin:0 auto 30px}
+  .acoes{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .nota-sistema{margin-top:18px;font-size:14px;color:var(--tinta-suave)}
+
+  /* ---------- recursos ---------- */
+  section{padding-block:64px;border-top:1px solid var(--borda)}
+  h2{font-size:clamp(24px,3.4vw,32px);letter-spacing:-.02em;margin:0 0 10px;text-align:center}
+  .subtitulo{text-align:center;color:var(--tinta-suave);margin:0 auto 40px;max-width:600px}
+  .grade{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .recurso{background:var(--fundo-suave);border:1px solid var(--borda);border-radius:14px;padding:22px}
+  .recurso h3{margin:0 0 6px;font-size:17px}
+  .recurso p{margin:0;font-size:15px;color:var(--tinta-suave)}
+
+  /* ---------- preços ---------- */
+  .planos{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));max-width:760px;margin:0 auto}
+  .plano{border:1px solid var(--borda);border-radius:16px;padding:28px;display:flex;flex-direction:column}
+  .plano.destaque{border-color:var(--roxo);box-shadow:0 8px 30px rgba(124,92,255,.13)}
+  .selo{display:inline-block;align-self:flex-start;background:var(--roxo);color:#fff;font-size:12px;font-weight:700;
+        text-transform:uppercase;letter-spacing:.04em;padding:4px 10px;border-radius:999px;margin-bottom:12px}
+  .plano h3{margin:0 0 4px;font-size:19px}
+  .plano .resumo{margin:0 0 18px;font-size:14px;color:var(--tinta-suave)}
+  .preco{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+  .preco .valor{font-size:38px;font-weight:700;letter-spacing:-.03em}
+  .preco .periodo{color:var(--tinta-suave);font-size:15px}
+  .preco .de{color:var(--tinta-suave);text-decoration:line-through;font-size:17px}
+  .observacao{font-size:13px;color:var(--tinta-suave);margin:0 0 20px;min-height:20px}
+  .plano ul{list-style:none;padding:0;margin:0 0 24px;font-size:15px}
+  .plano li{padding-left:24px;position:relative;margin-bottom:9px;color:var(--tinta-suave)}
+  .plano li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:700}
+  .plano .botao{margin-top:auto}
+
+  /* ---------- download ---------- */
+  .download{text-align:center}
+  .caixa-download{background:var(--fundo-suave);border:1px solid var(--borda);border-radius:16px;padding:32px;max-width:620px;margin:0 auto}
+  .caixa-download p{color:var(--tinta-suave);margin:0 0 22px}
+
+  /* ---------- rodapé ---------- */
+  footer{border-top:1px solid var(--borda);padding-block:34px;font-size:14px;color:var(--tinta-suave)}
+  .rodape{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  footer a{color:var(--tinta-suave)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="env topo">
+    <a class="marca" href="/"><span class="sigla">E</span>EasyGrind</a>
+    <nav>
+      <a href="#recursos">Recursos</a>
+      <a href="#planos">Planos</a>
+      <a href="#download">Download</a>
+    </nav>
+    <a class="botao botao-principal" href="#planos">Comprar</a>
+  </div>
+</header>
+
+<main>
+
+  <div class="env heroi">
+    <h1>Seus alunos, seus treinos e sua mensalidade no mesmo lugar.</h1>
+    <p class="chamada">
+      O EasyGrind organiza a ficha completa do aluno, a prescrição de treino, a avaliação física
+      e a cobrança — num programa que roda no seu computador, com os dados na sua máquina.
+    </p>
+    <div class="acoes">
+      <a class="botao botao-principal" href="#planos">Ver planos</a>
+      <a class="botao botao-neutro" href="#download">Baixar</a>
+    </div>
+    <p class="nota-sistema">Para Windows 10 ou 11 (64 bits).</p>
+  </div>
+
+  <section id="recursos">
+    <div class="env">
+      <h2>O que ele resolve</h2>
+      <p class="subtitulo">As tarefas que tomam seu tempo fora do atendimento.</p>
+
+      <div class="grade">
+        <div class="recurso">
+          <h3>Ficha completa do aluno</h3>
+          <p>Anamnese, antropometria e avaliação funcional no mesmo cadastro, com o histórico de cada medida.</p>
+        </div>
+        <div class="recurso">
+          <h3>Prescrição de treino</h3>
+          <p>Monte divisões por dia da semana, salve modelos e reaproveite o que você já usa com vários alunos.</p>
+        </div>
+        <div class="recurso">
+          <h3>Evolução registrada</h3>
+          <p>Treinos realizados e progresso das medidas viram gráfico e PDF — pronto para mostrar ao aluno.</p>
+        </div>
+        <div class="recurso">
+          <h3>Mensalidade em dia</h3>
+          <p>Planos, vencimentos e uma lista clara de quem está pendente, sem precisar conferir na planilha.</p>
+        </div>
+        <div class="recurso">
+          <h3>Cobrança automática</h3>
+          <p>Gere o link de pagamento e deixe o lembrete sair pelo WhatsApp antes e depois do vencimento.</p>
+        </div>
+        <div class="recurso">
+          <h3>Contrato do aluno</h3>
+          <p>Gere o contrato em PDF a partir do seu modelo e envie direto para o aluno.</p>
+        </div>
+        <div class="recurso">
+          <h3>Backup do seu jeito</h3>
+          <p>Cópias automáticas do banco, com restauração pelo próprio app se algo der errado no computador.</p>
+        </div>
+        <div class="recurso">
+          <h3>Funciona offline</h3>
+          <p>Os dados ficam no seu computador. Sem internet, você continua atendendo e registrando.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="planos">
+    <div class="env">
+      <h2>Planos</h2>
+      <p class="subtitulo">O mesmo sistema completo nos dois. Escolha como prefere pagar.</p>
+
+      <!-- ===================================================================
+           PREÇOS — ÚNICO LUGAR PARA EDITAR.
+           Promoção no lifetime: descomente o <span class="de"> e troque o
+           valor. O preço aqui PRECISA bater com o da Kiwify: quem vê 197 aqui
+           e 147 no checkout desconfia, e o contrário custa a venda.
+           =================================================================== -->
+      <div class="planos">
+
+        <div class="plano">
+          <h3>Mensal</h3>
+          <p class="resumo">Para começar sem compromisso.</p>
+          <div class="preco">
+            <span class="valor">R$ 20</span>
+            <span class="periodo">por mês</span>
+          </div>
+          <p class="observacao">Cancele quando quiser.</p>
+          <ul>
+            <li>Todos os recursos</li>
+            <li>Atualizações incluídas</li>
+            <li>Suporte por e-mail</li>
+          </ul>
+          <a class="botao botao-neutro" href="https://pay.kiwify.com.br/i9FNcfS">Assinar mensal</a>
+        </div>
+
+        <div class="plano destaque">
+          <span class="selo">Pagamento único</span>
+          <h3>Vitalício</h3>
+          <p class="resumo">Paga uma vez e é seu.</p>
+          <div class="preco">
+            <!-- <span class="de">R$ 197</span> -->
+            <span class="valor">R$ 197</span>
+            <span class="periodo">à vista</span>
+          </div>
+          <p class="observacao">Sem mensalidade. Equivale a 10 meses do plano mensal.</p>
+          <ul>
+            <li>Todos os recursos</li>
+            <li>Atualizações incluídas</li>
+            <li>Suporte por e-mail</li>
+          </ul>
+          <a class="botao botao-principal" href="https://pay.kiwify.com.br/xEQAY9a">Comprar vitalício</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="download" class="download">
+    <div class="env">
+      <h2>Download</h2>
+      <p class="subtitulo">Já comprou? Baixe e instale no seu computador.</p>
+
+      <div class="caixa-download">
+        <p>
+          Baixe o instalador <strong>EasyGrind Personal</strong> e entre com o e-mail e a senha
+          que você recebeu depois da compra. Quem já usa o sistema não precisa baixar nada aqui:
+          o próprio app avisa e atualiza sozinho.
+        </p>
+        <a class="botao botao-principal"
+           href="https://github.com/viiniciusnapoleao-bot/controle-de-acesso-releases/releases/latest">
+          Baixar para Windows
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="env rodape">
+    <span>© 2026 EasyGrind</span>
+    <!-- CONTATO: trocar quando o encaminhamento do e-mail estiver funcionando.
+         Não publicar apontando para uma caixa que ainda não recebe. -->
+    <span>Dúvidas antes de comprar? <a href="mailto:contato@easygrind.com.br">contato@easygrind.com.br</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
