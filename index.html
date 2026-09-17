@@ -95,6 +95,7 @@
   .download{text-align:center}
   .caixa-download{background:var(--fundo-suave);border:1px solid var(--borda);border-radius:16px;padding:32px;max-width:620px;margin:0 auto}
   .caixa-download p{color:var(--tinta-suave);margin:0 0 22px}
+  .aviso-baixar{margin:16px 0 0;font-size:14px}
 
   /* ---------- rodapé ---------- */
   footer{border-top:1px solid var(--borda);padding-block:34px;font-size:14px;color:var(--tinta-suave)}
@@ -235,10 +236,11 @@
           que você recebeu depois da compra. Quem já usa o sistema não precisa baixar nada aqui:
           o próprio app avisa e atualiza sozinho.
         </p>
-        <a class="botao botao-principal"
+        <a class="botao botao-principal" id="baixar"
            href="https://github.com/viiniciusnapoleao-bot/controle-de-acesso-releases/releases/latest">
           Baixar para Windows
         </a>
+        <p class="aviso-baixar" id="avisoBaixar" hidden></p>
       </div>
     </div>
   </section>
@@ -255,5 +257,53 @@
   </div>
 </footer>
 
+
+<script>
+  // O nome do instalador carrega a versão (ControleAcessoPersonal_Installer-1.0.1.exe),
+  // então não existe link fixo que continue valendo depois de cada release. Aqui a
+  // página pergunta ao GitHub qual é a última e manda o navegador direto ao arquivo,
+  // sem passar pela lista de versões.
+  //
+  // O link do botão continua apontando para a página de releases: se a consulta falhar
+  // (offline, limite de requisições do GitHub, formato inesperado), o clique segue por
+  // ele e o download continua possível.
+  (function () {
+    var API = 'https://api.github.com/repos/viiniciusnapoleao-bot/controle-de-acesso-releases/releases/latest';
+    var PERSONAL = /^ControleAcessoPersonal_Installer-.+\.exe$/;
+    var botao = document.getElementById('baixar');
+    var aviso = document.getElementById('avisoBaixar');
+    var rotulo = botao.textContent.trim();
+
+    function mostrar(texto) {
+      aviso.textContent = texto;
+      aviso.hidden = !texto;
+    }
+
+    botao.addEventListener('click', function (evento) {
+      // Ctrl/Cmd/Shift e botão do meio: o usuário quer abrir em outra aba. Deixa passar.
+      if (evento.ctrlKey || evento.metaKey || evento.shiftKey || evento.altKey || evento.button !== 0) return;
+      evento.preventDefault();
+      botao.textContent = 'Preparando...';
+      mostrar('');
+
+      fetch(API, { headers: { Accept: 'application/vnd.github+json' } })
+        .then(function (resposta) {
+          if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+          return resposta.json();
+        })
+        .then(function (release) {
+          var arquivo = (release.assets || []).filter(function (a) { return PERSONAL.test(a.name); })[0];
+          if (!arquivo) throw new Error('instalador não encontrado na release');
+          window.location.href = arquivo.browser_download_url;
+          botao.textContent = rotulo;
+          mostrar('Download iniciado (versão ' + String(release.tag_name || '').replace(/^v/, '') + ').');
+        })
+        .catch(function () {
+          // Reserva: a página de releases, que é o comportamento de antes.
+          window.location.href = botao.href;
+        });
+    });
+  })();
+</script>
 </body>
 </html>
